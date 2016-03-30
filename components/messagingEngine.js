@@ -1,6 +1,6 @@
 var socketCollectionFactory = require('../components/socketCollection');
-var socketModelFactory = require('../components/socketModel');
-var messageModelFactory = require('../components/messageModel');
+var socketDetailsFactory = require('../components/socketDetails');
+var messageDetailsBuilder = require('../components/messageDetail');
 
 var MessagingEngine = function () {
     var _self = this;
@@ -25,36 +25,36 @@ var MessagingEngine = function () {
     _self.listenToMessaging = function(socket){
 
         socket.on(AUTHENTICATION_EVENT, function(message){
-            var messageModel = _self.getMessageModel(message);
-            _self.registerSocket(socket.id, messageModel.getSenderId());
+            var messageDetails = _self.getMessageDetails(message);
+            _self.registerSocket(socket.id, messageDetails.getSenderId());
         });
 
         socket.on(MESSAGING_EVENT, function (message) {
-            var messageModel = _self.getMessageModel(message);
-            _self.sendMessage(messageModel);
+            var messageDetails = _self.getMessageDetails(message);
+            _self.sendMessage(messageDetails);
         });
     };
 
     _self.registerSocket = function(socketId, userId){
-        var socketModel = socketModelFactory.createSocketModel();
-        socketModel.setSocketId(socketId);
-        socketModel.setKey(userId);
-        _socketCollection.addSocket(socketModel);
+        var socketDetails = socketDetailsFactory.createSocketDetails();
+        socketDetails.setSocketId(socketId);
+        socketDetails.setKey(userId);
+        _socketCollection.addSocketDetails(socketDetails);
     };
 
-    _self.getMessageModel = function(message){
-        return messageModelFactory.createMessageModel(message);
+    _self.getMessageDetails = function(message){
+        return messageDetailsBuilder.buildMessageDetails(message);
     };
 
-    _self.sendMessage = function(messageModel){
-        var receiverSocketModel= _socketCollection.getSocket(messageModel.getReceiverId());
-        var receiverSocketId = receiverSocketModel.getSocketId();
-        var socket = sockets.connected[receiverSocketId];
-        _self.sendToSocket(socket, messageModel);
+    _self.sendMessage = function(messageDetails){
+        var receiverSocketDetails= _socketCollection.getSocketDetails(messageDetails.getReceiverId());
+        var receiverSocketId = receiverSocketDetails.getSocketId();
+        var socket = _io.sockets.connected[receiverSocketId];
+        _self.sendToSocket(socket, messageDetails);
     };
 
-    _self.sendToSocket = function(socket, messageModel){
-        socket.emit(MESSAGING_EVENT, messageModel.getJSON());
+    _self.sendToSocket = function(socket, messageDetails){
+        socket.emit(MESSAGING_EVENT, messageDetails.serializeToJSON());
     }
 };
 

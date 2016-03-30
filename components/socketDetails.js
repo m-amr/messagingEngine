@@ -2,7 +2,7 @@
  * Created by amr on 3/29/16.
  */
 
-var SocketModel = function(){
+var SocketDetails = function(){
 
     var _self = this;
     var _socketId = -1;
@@ -32,8 +32,6 @@ var SocketModel = function(){
     }
 };
 
-exports.createSocketModel = function(){
-
-    var socketModel = new SocketModel();
-    return socketModel;
+exports.createSocketDetails = function(){
+    return new SocketDetails();
 };

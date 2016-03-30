@@ -7,11 +7,11 @@ var SocketCollection = function(){
     var _self = this;
     var _sockets = [];
 
-    _self.addSocket = function(socketModel){
+    _self.addSocketDetails = function(socketModel){
         _sockets[socketModel.getKey()] = socketModel;
     };
 
-    _self.getSocket = function (key) {
+    _self.getSocketDetails = function (key) {
         return _sockets[key];
     }
 };

@@ -2,12 +2,12 @@
  * Created by amr on 3/29/16.
  */
 
-var MessageModel = function(){
+var MessageDetails = function(){
 
-    _self = this;
-    _senderId = -1;
-    _receiverId = -1;
-    _message = -1;
+    var _self = this;
+    var _senderId = -1;
+    var _receiverId = -1;
+    var _message = -1;
 
     _self.setSenderId = function(senderId){
         _senderId = senderId;
@@ -33,7 +33,7 @@ var MessageModel = function(){
         return _message;
     };
 
-    _self.getJSON = function(){
+    _self.serializeToJSON = function(){
 
         return {
             'senderId' : _self.getSenderId(),
@@ -41,14 +41,18 @@ var MessageModel = function(){
             'message' : _self.getMessage()
         }
     };
+
+    _self.buildFromJson = function(messageData){
+        _self.setSenderId(messageData.senderId);
+        _self.setReceiverId(messageData.receiverId);
+        _self.setMessage(messageData.message);
+    }
 };
 
-exports.createMessageModel = function(messageData){
-    var messageModel = new MessageModel();
-    messageModel.setSenderId(messageData.senderId);
-    messageModel.setReceiverId(messageData.receiverId);
-    messageModel.setMessage(messageData.message);
+exports.buildMessageDetails = function(messageData){
+    var messageDetails = new MessageDetails();
+    messageDetails.buildFromJson(messageData);
 
-    return messageModel;
+    return messageDetails;
 
 };
